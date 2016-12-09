@@ -1,0 +1,23 @@
+" ============================================================================
+" Netrw Directory Listing                                        (netrw v149)
+"   /cygdrive/c/users/jobz/staging/work/gaprac/exer/cpp_prac/test_all/INPUTOUTPUT
+"   Sorted by      name
+"   Sort sequence: [\/]$,\<core\%(\.\d\+\)\=\>,\.h$,\.c$,\.cpp$,\~\=\*$,*,\.o$,\.obj$,\.info$,\.swp$,\.bak$,\~$
+"   Quick Help: <F1>:help  -:go up dir  D:delete  R:rename  s:sort-by  x:exec
+" ============================================================================
+../
+./
+.def.h.un~*
+.general.cpp.un~*
+.mgr.cpp.un~*
+Makefile*
+def.h*
+def.h~*
+general.cpp*
+general.cpp~*
+mgr.cpp*
+mgr.cpp~*
+.def.h.swp
+.general.cpp.swp
+.mgr.cpp.swp
+.swp
