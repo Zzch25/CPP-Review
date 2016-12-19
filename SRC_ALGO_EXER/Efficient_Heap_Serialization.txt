@@ -1,0 +1,162 @@
+/*
+(C) Zachary Job, 2016
+
+Derived from leetcode exercise
+Copying, and use prohibited
+*/
+
+struct TreeNodeDef
+{
+	int val;
+	TreeNodeDef *left;
+	TreeNodeDef *right;
+	TreeNodeDef(int x) : val(x), left(NULL), right(NULL) {};
+};
+typedef struct TreeNodeDef TreeNode;
+
+class Solution_Encode_Tree_Full
+{
+	public:
+		// Encodes a tree to a single string.
+		string serialize(TreeNode* root)
+		{
+			int total;
+			bool popLast, returnRight;
+			TreeNode *lastPop;
+			stack<TreeNode*> treeNodeStack;
+			string result, temp;
+
+			result = "X";
+			
+			if(root != NULL)
+			{
+    			for(total = 1, popLast = false, returnRight = false, treeNodeStack.push(root); !treeNodeStack.empty() || (total == 0 && root != NULL);)
+    			{
+    				if(!popLast && treeNodeStack.top()->left != NULL)
+    				{
+    					treeNodeStack.push(treeNodeStack.top()->left);
+    					total++;
+    				}
+    				else if(!returnRight && treeNodeStack.top()->right != NULL)
+    				{
+    					popLast = returnRight = false;	
+    					
+    					treeNodeStack.push(treeNodeStack.top()->right);
+    					total++;
+    				}
+    				else
+    				{
+    					popLast = true;
+    
+    					lastPop = treeNodeStack.top();
+    					treeNodeStack.pop();
+    					
+    					if(!treeNodeStack.empty())
+    						returnRight = lastPop == treeNodeStack.top()->right;
+    
+    					temp.assign(to_string(lastPop->val));
+    					temp.append((lastPop->left != NULL) ? "T" : "F");
+    					temp.append((lastPop->right != NULL) ? "T" : "F");
+    
+    					result.insert(1, temp);
+    				}
+    			}
+    		
+    			result.insert(0, to_string(total));
+			}
+		    
+			return result;
+		}
+
+		// Decodes your encoded data to tree.
+		TreeNode* deserialize(string data)
+		{
+			const int offset = sizeof(int) + 1;
+			
+			bool popLast, returnLeft;
+			int itr, boolItr, len, val, last;
+			TreeNode *result, *curr, *lastPop;
+			stack<TreeNode*> decodeStack;
+			bool *stackIsLeft;	
+
+            result = NULL;
+
+            if(data.size() > 1)
+            {
+    			boolItr = 0;
+    
+    			for(itr = 0; data[itr] != 'X'; ++itr);
+    			len = stoi(data.substr(0,itr++));
+    
+    			for(last = itr; itr < data.size() && data.at(itr) != 'T' && data.at(itr) != 'F'; ++itr);
+    			val = stoi(data.substr(last,itr - last));
+    			itr = last + data.substr(last,itr - last).size();
+    
+    			result = new TreeNode(val);
+    			result->left = (TreeNode*)((data.at(itr++) == 'T') ? true : false);
+    			result->right = (TreeNode*)((data.at(itr++) == 'T') ? true : false);
+    
+    			stackIsLeft = new bool[len]();
+    			stackIsLeft[boolItr] = true;
+    
+    			for(popLast = false, returnLeft = false, decodeStack.push(result), --len; len > 0 || !decodeStack.empty();)
+    			{
+    				if(!popLast && decodeStack.top()->right != (TreeNode*)false && decodeStack.top()->right != NULL)
+    				{
+    					for(last = itr; itr < data.size() && data.at(itr) != 'T' && data.at(itr) != 'F'; ++itr);
+    					val = stoi(data.substr(last,itr - last));
+    					itr = last + data.substr(last,itr - last).size();
+    					
+    					curr = new TreeNode(val);
+    					curr->left = (TreeNode*)((data.at(itr++) == 'T') ? true : false);
+    					curr->right = (TreeNode*)((data.at(itr++) == 'T') ? true : false);
+    
+    					stackIsLeft[++boolItr] = false;
+    					decodeStack.push(curr);
+    					--len;
+    				}
+    				else if(!returnLeft && decodeStack.top()->left != (TreeNode*)false && decodeStack.top()->left != NULL)
+    				{
+    					popLast = returnLeft = false;	
+    
+    					for(last = itr; itr < data.size() && data.at(itr) != 'T' && data.at(itr) != 'F'; ++itr);
+    					val = stoi(data.substr(last,itr - last));
+    					itr = last + data.substr(last,itr - last).size();
+    					
+    					curr = new TreeNode(val);
+    					curr->left = (TreeNode*)((data.at(itr++) == 'T') ? true : false);
+    					curr->right = (TreeNode*)((data.at(itr++) == 'T') ? true : false);
+    
+    					stackIsLeft[++boolItr] = true;
+    					decodeStack.push(curr);
+    					--len;
+    				}
+    				else
+    				{
+    					popLast = true;
+    
+    					lastPop = decodeStack.top();
+    					decodeStack.pop();
+                        
+                        //cout << "POP " << lastPop->val << endl;
+    
+    					if(!decodeStack.empty())
+    					{
+    						returnLeft = stackIsLeft[boolItr];
+    
+    						if(returnLeft)
+    							decodeStack.top()->left = lastPop;
+    						else
+    							decodeStack.top()->right = lastPop;
+    					}
+    					
+    					--boolItr;
+    				}
+    			}
+    			
+    			delete [] stackIsLeft;
+            }
+
+			return result;
+		}
+};
