@@ -1,0 +1,1 @@
+Parts of C11 I thought to be directly applicable to my needs
