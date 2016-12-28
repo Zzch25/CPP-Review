@@ -1,0 +1,1 @@
+These are not really well designed. They were done quickly so that I could try to "beat the clock". They are not a representation of my style and proper use, however more of a how fast I could spit out code that worked within parameters.
